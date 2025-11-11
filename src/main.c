@@ -1,4 +1,4 @@
-#include "libefpix.h"
+#include "../lib/libefpix.h"
 #include <time.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -88,7 +88,7 @@ bool receiver_get_contact_from_alias(uint8_t alias[ALIAS_SIZE], Contact* contact
     return false;
 }
 void get_timestamp(uint8_t timestamp[TIMESTAMP_SIZE]) {
-    uint64_t now = (uint64_t)time(NULL);
+    uint32_t now = (uint32_t)(time(NULL)-1577836800);
     memcpy(timestamp, &now, TIMESTAMP_SIZE);
 }
 uint32_t get_age(uint8_t recv_time[TIMESTAMP_SIZE], uint8_t send_time[TIMESTAMP_SIZE]) {
@@ -116,14 +116,14 @@ void add_contact(Contact contacts[MAX_CONTACTS], int* contact_count, const char*
 void alias_copy(uint8_t dest[ALIAS_SIZE], const char* src) {
     memset(dest, 0, ALIAS_SIZE);
     strncpy((char*)dest, src, ALIAS_SIZE - 1);
+    dest[ALIAS_SIZE - 1] = '\0';
 }
-
 void dispatch_send(char* message, uint8_t packet[PACKET_SIZE]){
     Send send_msg={0};
     send_msg.anonymous = false;
     send_msg.broadcast = false;
     memcpy(&send_msg.identity, &sender_node, sizeof(Identity));
-    alias_copy(send_msg.my_alias, "DISPATCH");
+    alias_copy(send_msg.my_alias, "DSPTCH");
     memcpy(send_msg.receiver_kx_public_key, receiver_node.kx_public_key, 32);
     get_timestamp(send_msg.timestamp);
     memcpy(send_msg.internal_address, "001", 3);
@@ -249,8 +249,8 @@ int main() {
     generate_identity(&relay_node);
     generate_identity(&receiver_node);
 
-    add_contact(sender_contacts, &sender_contact_count, "AGENT", receiver_node.kx_public_key, receiver_node.sign_public_key, "DISPATCH");
-    add_contact(receiver_contacts, &receiver_contact_count, "DISPATCH", sender_node.kx_public_key, sender_node.sign_public_key, "AGENT");
+    add_contact(sender_contacts, &sender_contact_count, "AGENT", receiver_node.kx_public_key, receiver_node.sign_public_key, "DSPTCH");
+    add_contact(receiver_contacts, &receiver_contact_count, "DSPTCH", sender_node.kx_public_key, sender_node.sign_public_key, "AGENT");
 
     char dispatch_message[MESSAGE_SIZE];
     uint8_t packet[PACKET_SIZE];
@@ -329,5 +329,6 @@ int main() {
             draw(node_type, agent_text);
         }
     }
+    printf("%d\n", PACKET_SIZE);
     return 0;
 }

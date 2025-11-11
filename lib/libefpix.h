@@ -5,14 +5,14 @@
 #include "../lib/monocypher-ed25519.h"
 //=========================CONFIG==============================
 #define VERSION 1
-#define ALIAS_SIZE 16
-#define TIMESTAMP_SIZE 8
-#define INTERNAL_ADDRESS_SIZE 4
-#define MESSAGE_SIZE 256
-#define HASH_SIZE 64
-#define POW_NONCE_SIZE 8
+#define ALIAS_SIZE 8
+#define TIMESTAMP_SIZE 4
+#define INTERNAL_ADDRESS_SIZE 1
+#define MESSAGE_SIZE 64
+#define HASH_SIZE 16
+#define POW_NONCE_SIZE 4
 #define POW_ZEROS 2
-#define MAX_AGE 1000
+#define MAX_AGE 5
 //=====================HELPER PREPROCS=========================
 #define UNICAST 0
 #define SIGNED_BROADCAST 1
